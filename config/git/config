@@ -1,0 +1,71 @@
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	frag = magenta bold
+	meta = yellow bold
+	new = green bold
+	old = red bold
+	whitespace = red reverse
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[core]
+	pager = delta
+
+[delta]
+	# https://dandavison.github.io/delta/configuration.html
+	hyperlinks = true
+	line-numbers = true
+	navigate = true
+	syntax-theme = Monokai Extended
+
+[diff]
+	colorMoved = default
+	algorithm = histogram
+	interHunkContext = 3
+
+[fetch]
+	prune = true
+
+[help]
+	autoCorrect = promptenv
+
+[init]
+	defaultBranch = main
+
+[interactive]
+	diffFilter = delta --color-only
+	singleKey = true
+
+[merge]
+	conflictStyle = zdiff3
+
+[pager]
+	ls-files = true
+	status = true
+	autoStash = true
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+
+[rerere]
+	enabled = true
+
+[user]
+	name = Sylvain Gable
+	email = sylvain@vingtcinq.io
+[log]
+	follow = true
