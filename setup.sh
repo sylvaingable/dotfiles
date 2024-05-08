@@ -14,3 +14,9 @@ mkdir -p ~/.config
 
 # Link zsh config if it doesn’t exist
 [ ! -e ~/.zshrc ] && ln -s "$PWD/zshrc" ~/.zshrc
+
+# Loop over ipython files and link them
+for file in $PWD/ipython/profile_default/startup/*; do
+    # echo "$file"
+    [ ! -e ~/.ipython/profile_default/startup/$(basename "$file") ] && ln -s "$file" ~/.ipython/profile_default/startup/$(basename "$file")
+done
