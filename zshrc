@@ -236,6 +236,20 @@ fail() { while $*; do :; done }
 5times() { for i in {1..5}; do "$@"; done }
 
 
+# switch venv automatically
+venv() {
+  if command -v deactivate &> /dev/null ; then
+    deactivate
+  fi
+  if [ -d "venv" ] ; then
+    source venv/bin/activate
+  elif [ -d ".venv" ] ; then
+    source .venv/bin/activate
+  else
+    echo "No venv found"
+  fi
+}
+
 # Locally fast-forward the checked-out branch into another and push the latter to origin
 gffp() {
   for branch in "$@"
