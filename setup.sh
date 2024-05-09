@@ -9,14 +9,17 @@ set -x
 # Ensure config directory exists
 mkdir -p ~/.config
 
-# Link Git config if it doesn’t exist
+# Link Git config
 [ ! -e ~/.config/git ] && ln -s "$PWD/config/git" ~/.config/git
 
-# Link zsh config if it doesn’t exist
+# Link zsh config
 [ ! -e ~/.zshrc ] && ln -s "$PWD/zshrc" ~/.zshrc
 
-# Loop over ipython files and link them
+# Link ipython default profile startup scripts
 for file in $PWD/ipython/profile_default/startup/*; do
     # echo "$file"
     [ ! -e ~/.ipython/profile_default/startup/$(basename "$file") ] && ln -s "$file" ~/.ipython/profile_default/startup/$(basename "$file")
 done
+
+# Link psql config
+[ ! -e ~/.psqlrc ] && ln -s "$PWD/psqlrc" ~/.psqlrc
