@@ -3,6 +3,7 @@
 
 # Init brew
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Load zsh completions
 FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
@@ -196,11 +197,12 @@ eval "$(direnv hook zsh)"
 alias ll='ls -alh'
 
 # One CLI client
-alias 'one=/Users/sylvain/projects/one-cli/venv/bin/one'
+alias 'one=$HOME/projects/one-cli/.venv/bin/one'
+export PYTHONPATH="$HOME/projects/one-cli:$PYTHONPATH"
 
 ## Django-related aliases
 alias 'rs=python -Wonce::DeprecationWarning manage.py runserver'
-alias 'drs=python -m debugpy --wait-for-client --listen localhost:5678 manage.py runserver --nothreading'
+alias 'drs=python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py runserver --nothreading'
 alias 'sp=PYTHONSTARTUP=".startup.py" python manage.py shell_plus'
 alias 'dsp=PYTHONSTARTUP=".startup.py" python -m debugpy --wait-for-client --listen localhost:5678 manage.py shell_plus'
 alias 'shu=python manage.py show_urls'
@@ -211,12 +213,12 @@ alias 'ck=python manage.py check'
 alias 't=python manage.py test --keepdb --failfast -k'
 alias 'tr=python manage.py test --noinput --failfast -k'
 alias 'ft=fail python manage.py test --keepdb --failfast -k'
-alias 'dt=python -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb --failfast -k'
-alias 'fdt=fail python -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb -k'
+alias 'dt=PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT=5 python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb --failfast -k'
+alias 'fdt=fail python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb -k'
 alias 'tv=python manage.py test --keepdb --failfast -v2 --print-result -k'
 
 ## Python aliases
-alias 'dbg=python -m debugpy --wait-for-client --listen localhost:5678'
+alias 'dbg=python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678'
 
 ## Custom git aliases
 alias 'commit=git add . && git commit -a -m'
@@ -269,6 +271,16 @@ rgf() {
   rg --files-with-matches --no-messages "$@" | fzf --preview "rg --json --context 10 '$@[-1]' {} | delta"
 }
 
+# Fetch remote branch without checking it out
+gfb() {
+  git fetch . origin/$1:$1
+}
+
+# Hard reset local branch to remote counterpart without checking it out
+gbf() {
+  git reset -f $1 origin/$1
+}
+
 git-ls-sizes() {
 git rev-list --objects --all |
   git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |
@@ -292,3 +304,6 @@ fkill() {
         echo $pid | xargs kill -${1:-9}
     fi  
 }
+
+# Created by `pipx` on 2024-06-11 04:54:27
+export PATH="$PATH:/Users/sylvain/.local/bin"
