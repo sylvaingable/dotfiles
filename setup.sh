@@ -23,3 +23,7 @@ done
 
 # Link psql config
 [ ! -e ~/.psqlrc ] && ln -s "$PWD/psqlrc" ~/.psqlrc
+
+# Link pip config
+mkdir -p ~/.pip
+[ ! -e ~/.pip/pip.conf ] && ln -s "$PWD/pip.conf" ~/.pip/pip.conf
