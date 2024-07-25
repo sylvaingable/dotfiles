@@ -305,5 +305,31 @@ fkill() {
     fi  
 }
 
+# Execute a command n times and compute its average execution time
+function avg_time {
+    local n=$1
+    shift
+    local command="$@"
+
+    local total_time=0
+
+    for (( i=1; i<=n; i++ ))
+    do
+        # Measure the execution time using zsh's built-in time feature
+        local exec_time=$(zsh -ic "time $command" 2>&1)
+        
+        # Extract the total time using awk, focusing on the line with 'total'
+        local time_in_seconds=$(echo "$exec_time" | awk '/total/ {print $(NF-1)}')
+        
+        # Add to total time
+        total_time=$(awk -v total="$total_time" -v current="$time_in_seconds" 'BEGIN {printf "%.3f", total + current}')
+        
+        echo "Iteration $i: $time_in_seconds seconds" >&2
+    done
+
+    local average_time=$(awk -v total="$total_time" -v n="$n" 'BEGIN {printf "%.3f", total / n}')
+    echo "Average execution time: $average_time seconds"
+}
+
 # Created by `pipx` on 2024-06-11 04:54:27
 export PATH="$PATH:/Users/sylvain/.local/bin"
