@@ -270,6 +270,12 @@ diffmig() {
   git diff --name-status $1..$2 | grep -e ^A | grep /migrations/
 }
 
+# Get the name of a Django class-based view from its namespace
+cbv() {
+  venv
+  python manage.py show_urls | rg "\S+\s+\S+\.(\S+)\s+$@$" -or '$1' | tee >(pbcopy)
+}
+
 # Combine ripgrep/fzf/delta to search for a string in a git repo
 rgf() {
   rg --files-with-matches --no-messages "$@" | fzf --preview "rg --json --context 10 '$@[-1]' {} | delta"
