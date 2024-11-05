@@ -23,6 +23,9 @@ export PYTHONDEVMODE=1
 # Zoxide init
 eval "$(zoxide init zsh)"
 
+# Autoenv init
+source /opt/homebrew/opt/autoenv/activate.sh
+
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/sylvain/.oh-my-zsh"
 
@@ -112,7 +115,7 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    direnv
+    autoenv
     iterm2
     git
     git-prompt
@@ -191,9 +194,6 @@ export NVM_DIR="$HOME/.nvm"
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-
-# Init direnv
-eval "$(direnv hook zsh)"
 
 # Custom aliases
 
