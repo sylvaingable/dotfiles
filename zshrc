@@ -216,12 +216,13 @@ alias 'ck=python manage.py check'
 alias 't=python manage.py test --keepdb --failfast -k'
 alias 'tr=python manage.py test --noinput --failfast -k'
 alias 'ft=fail python manage.py test --keepdb --failfast -k'
-alias 'dt=PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT=5 python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb --failfast -k'
-alias 'fdt=fail python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py test --keepdb -k'
+alias 'dt=python manage.py test --keepdb --pudb -k'
+alias 'fdt=fail python manage.py test --keepdb --pudb -k'
 alias 'tv=python manage.py test --keepdb --failfast -v2 --print-result -k'
 
 ## Python aliases
-alias 'dbg=python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678'
+alias 'dbgpy=PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT=5 python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678'
+alias 'pudb=python -m pudb -c'
 
 ## Custom git aliases
 alias 'commit=git add . && git commit -a -m'
