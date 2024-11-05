@@ -121,7 +121,7 @@ plugins=(
     git-prompt
     macos
     python
-    you-should-use
+    #you-should-use
 )
 
 # If iterm2 plugin is activated
@@ -334,6 +334,3 @@ function avg_time {
     local average_time=$(awk -v total="$total_time" -v n="$n" 'BEGIN {printf "%.3f", total / n}')
     echo "Average execution time: $average_time seconds"
 }
-
-# Created by `pipx` on 2024-06-11 04:54:27
-export PATH="$PATH:/Users/sylvain/.local/bin"
