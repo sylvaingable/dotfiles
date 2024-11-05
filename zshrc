@@ -201,8 +201,7 @@ eval "$(pyenv init -)"
 alias ll='ls -alh'
 
 # One CLI client
-alias 'one=$HOME/projects/one-cli/.venv/bin/one'
-export PYTHONPATH="$HOME/projects/one-cli:$PYTHONPATH"
+alias 'one=PYTHONPATH=$HOME/projects/one-cli/ $HOME/projects/one-cli/.venv/bin/one'
 
 ## Django-related aliases
 alias 'rs=python -Wonce::DeprecationWarning manage.py runserver'
