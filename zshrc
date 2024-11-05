@@ -1,6 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# Set locale to English
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 # Init brew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
