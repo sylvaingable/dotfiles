@@ -21,6 +21,10 @@ for file in $PWD/ipython/profile_default/startup/*; do
     [ ! -e ~/.ipython/profile_default/startup/$(basename "$file") ] && ln -s "$file" ~/.ipython/profile_default/startup/$(basename "$file")
 done
 
+# Link (i)pdb config
+[ ! -e ~/.pdbrc ] && ln -s "$PWD/pdbrc" ~/.pdbrc
+
+
 # Link psql config
 [ ! -e ~/.psqlrc ] && ln -s "$PWD/psqlrc" ~/.psqlrc
 
