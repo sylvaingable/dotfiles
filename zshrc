@@ -213,7 +213,7 @@ alias 'ck=python manage.py check'
 alias 't=python manage.py test --keepdb --failfast -k'
 alias 'tr=python manage.py test --noinput --failfast -k'
 alias 'ft=fail python manage.py test --keepdb --failfast -k'
-alias 'dt=python manage.py test --keepdb --pudb -k'
+alias 'dt=python manage.py test --keepdb --failfast --pudb -k'
 alias 'fdt=fail python manage.py test --keepdb --pudb -k'
 alias 'tv=python manage.py test --keepdb --failfast -v2 --print-result -k'
 
@@ -223,12 +223,13 @@ alias 'pudb=python -m pudb -c'
 
 ## Custom git aliases
 alias 'commit=git add . && git commit -a -m'
-## https://jordanelver.co.uk/blog/2020/06/04/fixing-commits-with-git-commit-fixup-and-git-rebase-autosquash/#fixup-commits
+### Pick commit to fixup interactively
+### https://jordanelver.co.uk/blog/2020/06/04/fixing-commits-with-git-commit-fixup-and-git-rebase-autosquash/#fixup-commits
 alias 'fixup=git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup'
-## Switch branches interactively
-alias 'gswr=git branch --sort=-committerdate --format="%(refname:short)" | fzf --preview="git log --date=relative --color main..{}" | xargs git switch'
-## Apply autosquash rebase to the current branch
-alias 'gras=GIT_EDITOR=true git rebase -i --autosquash --keep-base $(git_main_branch)'
+### Switch branches interactively
+alias 'gs=git branch --sort=-committerdate --format="%(refname:short)" | fzf --preview="git log --date=relative --color main..{}" | xargs git switch'
+### Pick commit to show interactively
+alias 'gshow=git log --pretty=format:"%h %s" --no-merges | fzf | cut -c -7 | xargs -o git show'
 
 # Custom functions
 
@@ -262,22 +263,6 @@ gffp() {
   done
 }
 
-# List Django migrations added between two commits
-diffmig() {
-  git diff --name-status $1..$2 | grep -e ^A | grep /migrations/
-}
-
-# Get the name of a Django class-based view from its namespace
-cbv() {
-  venv
-  python manage.py show_urls | rg "\S+\s+\S+\.(\S+)\s+$@$" -or '$1' | tee >(pbcopy)
-}
-
-# Combine ripgrep/fzf/delta to search for a string in a git repo
-rgf() {
-  rg --files-with-matches --no-messages "$@" | fzf --preview "rg --json --context 10 '$@[-1]' {} | delta"
-}
-
 # Fetch remote branch without checking it out
 gfb() {
   git fetch . origin/$1:$1
@@ -286,6 +271,51 @@ gfb() {
 # Hard reset local branch to remote counterpart without checking it out
 gbf() {
   git reset -f $1 origin/$1
+}
+
+# Autosquash rebase the current branch onto a specific commit (last commit of the main
+# branch by default)
+gras() {
+  local target=${1:-$(git_main_branch)}
+  echo $target
+  GIT_EDITOR=true git rebase -i --autosquash --keep-base "$target"
+}
+# Same as above with interactive selection of a specific commit to rebase onto
+grasi() {
+  export GIT_EDITOR=true
+  local commit
+  commit=$(git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -7)
+  
+  if [[ -n $commit ]]; then
+    git rebase -i --autosquash --keep-base "$commit"
+  else
+    echo "No commit selected, aborting."
+  fi
+
+  unset GIT_EDITOR
+}
+
+
+
+# List Django migrations modified between two commits
+diffmig() {
+  git diff --name-only $1..$2 | rg --color=never /migrations/ | rg -v '__init__.py'
+}
+
+# Remove a migration file
+rmig() {
+   fd $@ . --exec rm
+}
+
+# Get the name of a Django class-based view from its namespace
+cbv() {
+#  venv
+  python manage.py show_urls | rg "\S+\s+\S+\.(\S+)\s+$@$" -or '$1' | tee >(pbcopy)
+}
+
+# Combine ripgrep/fzf/delta to search for a string in a git repo
+rgf() {
+  rg --files-with-matches --no-messages "$@" | fzf --preview "rg --json --context 10 '$@[-1]' {} | delta"
 }
 
 git-ls-sizes() {
@@ -336,4 +366,11 @@ function avg_time {
 
     local average_time=$(awk -v total="$total_time" -v n="$n" 'BEGIN {printf "%.3f", total / n}')
     echo "Average execution time: $average_time seconds"
+}
+
+cloc-git () {
+  local tmp_folder=$(cat /dev/urandom | base64 | \tr -dc '0-9a-zA-Z' | head -c25)
+  git clone --depth 1 "$1" /tmp/$tmp_folder
+  cloc /tmp/$tmp_folder
+  rm -rf /tmp/$tmp_folder
 }
