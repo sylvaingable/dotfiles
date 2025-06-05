@@ -23,8 +23,8 @@ export PYTHONDEVMODE=1
 # Zoxide init
 eval "$(zoxide init zsh)"
 
-# Autoenv init
-source /opt/homebrew/opt/autoenv/activate.sh
+# zsh-autoenv init — https://github.com/Tarrasch/zsh-autoenv
+source ~/projects/dotfiles/lib/zsh-autoenv/autoenv.zsh
 
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/sylvain/.oh-my-zsh"
@@ -115,13 +115,10 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    autoenv
     iterm2
     git
-    git-prompt
     macos
     python
-    #you-should-use
 )
 
 # If iterm2 plugin is activated
