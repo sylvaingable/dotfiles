@@ -30,9 +30,12 @@
 	colorMoved = default
 	algorithm = histogram
 	interHunkContext = 3
+	renames = true
 
 [fetch]
 	prune = true
+	pruneTags = true
+	all = true
 
 [help]
 	autoCorrect = promptenv
@@ -64,6 +67,7 @@
 
 [rerere]
 	enabled = true
+	autoupdate = true
 
 [user]
 	name = Sylvain Gable
@@ -71,3 +75,7 @@
 
 [log]
 	follow = true
+[column]
+	ui = auto
+[tag]
+	sort = version:refname
