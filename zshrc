@@ -200,6 +200,9 @@ alias ll='ls -alh'
 ## One CLI client
 alias 'one=PYTHONPATH=$HOME/projects/one-cli/ $HOME/projects/one-cli/.venv/bin/one'
 
+## localcurl alias
+alias lc='localcurl http://127.0.0.1:8000'
+
 ## Django-related aliases
 alias 'rs=python -Wonce::DeprecationWarning manage.py runserver'
 alias 'drs=python -Xfrozen_modules=off -m debugpy --wait-for-client --listen localhost:5678 manage.py runserver --nothreading'
