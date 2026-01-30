@@ -431,3 +431,17 @@ cloc-git () {
   cloc /tmp/$tmp_folder
   rm -rf /tmp/$tmp_folder
 }
+
+function memtime() {
+  # Run the command with \time, capture output, and store exit status
+  output=$( ( \time -l "$@" ) 2>&1 )
+  exit_status=$?
+
+  # Extract max RSS (in bytes) and convert to MiB (mebibytes)
+  max_rss_bytes=$(echo "$output" | awk '/maximum resident set size/ {print $1}')
+  max_rss_mib=$((max_rss_bytes / 1024 / 1024))
+
+  echo "${max_rss_mib} MiB"
+
+  return $exit_status
+}
