@@ -266,6 +266,16 @@ gffp() {
   done
 }
 
+# Locally hard reset the provided branches to the checked-out branch and force push them to origin
+ghrfp() {
+  local current_commit=$(git rev-parse HEAD)
+  for branch in "$@"
+  do
+    git update-ref "refs/heads/$branch" "$current_commit"
+    git push --force origin "$branch"
+  done
+}
+
 # Fetch remote branch without checking it out
 gfb() {
   git fetch . origin/$1:$1
