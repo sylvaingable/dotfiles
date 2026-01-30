@@ -197,7 +197,7 @@ eval "$(pyenv init -)"
 ## Generic aliases
 alias ll='ls -alh'
 
-# One CLI client
+## One CLI client
 alias 'one=PYTHONPATH=$HOME/projects/one-cli/ $HOME/projects/one-cli/.venv/bin/one'
 
 ## Django-related aliases
