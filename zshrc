@@ -320,11 +320,55 @@ rmig() {
    fd $@ . --exec rm
 }
 
-# Get the name of a Django class-based view from its namespace
-cbv() {
-#  venv
-  python manage.py show_urls | rg "\S+\s+\S+\.(\S+)\s+$@$" -or '$1' | tee >(pbcopy)
+# Open a Django view by filtering Django URLs interactively (a first filter can be
+# provided as a regex )
+odv() {
+  local pattern=$1
+  local selected
+  if [ -n "$pattern" ]; then
+    selected=$(python manage.py show_urls | rg "$pattern")
+  else
+    selected=$(python manage.py show_urls)
+  fi
+  local view=$(echo "$selected" | fzf --height=60% --reverse | awk -F'\t' '{print $2}')
+  
+  if [ -n "$view" ]; then
+    # Extract just the class name (without module path)
+    local class_name="${view##*.}"
+    # Extract the module path
+    local module_path="${view%.*}"
+    # Convert module path to file path
+    local file_path="${module_path//.//}.py"
+    
+    # Try to find the file using git
+    local found_file=$(git ls-files "*/$file_path" | head -1)
+    
+    if [ -n "$found_file" ]; then
+      # Search for the class definition in the file
+      local line_number=$(rg -n "class $class_name\b" "$found_file" | cut -d: -f1 | head -1)
+      
+      if [ -n "$line_number" ]; then
+        # Open in VS Code at the specific line
+        code -g "$found_file:$line_number"
+      else
+        # Open the file without a specific line if class not found
+        code "$found_file"
+        echo "Class $class_name not found in $found_file, opened file instead"
+      fi
+    else
+      # If file not found, try to find the class anywhere in the project
+      local class_location=$(git grep -l "class $class_name" | head -1)
+      
+      if [ -n "$class_location" ]; then
+        local line_number=$(rg -n "class $class_name\b" "$class_location" | cut -d: -f1 | head -1)
+        code -g "$class_location:$line_number"
+      else
+        echo "Could not find file or class: $class_name"
+      fi
+    fi
+  fi
 }
+
 
 # Combine ripgrep/fzf/delta to search for a string in a git repo
 rgf() {
