@@ -228,11 +228,11 @@ alias 'pudb=python -m pudb -c'
 alias 'commit=git add . && git commit -a -m'
 ### Pick commit to fixup interactively
 ### https://jordanelver.co.uk/blog/2020/06/04/fixing-commits-with-git-commit-fixup-and-git-rebase-autosquash/#fixup-commits
-alias 'fixup=git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup'
+alias 'fixup=git log -n 50 --pretty=format:"%h %s" --no-merges | fzf --reverse | cut -c -7 | xargs -o git commit --fixup'
 ### Switch branches interactively
 alias 'gs=git branch --sort=-committerdate --format="%(refname:short)" | fzf --preview="git log --date=relative --color main..{}" | xargs git switch'
 ### Pick commit to show interactively
-alias 'gshow=git log --pretty=format:"%h %s" --no-merges | fzf | cut -c -7 | xargs -o git show'
+alias 'gshow=git log --pretty=format:"%h %s" --no-merges | fzf --reverse | cut -c -7 | xargs -o git show'
 
 # Custom functions
 
@@ -287,7 +287,7 @@ gras() {
 grasi() {
   export GIT_EDITOR=true
   local commit
-  commit=$(git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -7)
+  commit=$(git log -n 50 --pretty=format:"%h %s" --no-merges | fzf --reverse | cut -c -7)
   
   if [[ -n $commit ]]; then
     git rebase -i --autosquash --keep-base "$commit"
