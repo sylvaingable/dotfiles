@@ -233,6 +233,8 @@ alias 'fixup=git log -n 50 --pretty=format:"%h %s" --no-merges | fzf --reverse |
 alias 'gs=git branch --sort=-committerdate --format="%(refname:short)" | fzf --preview="git log --date=relative --color main..{}" | xargs git switch'
 ### Pick commit to show interactively
 alias 'gshow=git log --pretty=format:"%h %s" --no-merges | fzf --reverse | cut -c -7 | xargs -o git show'
+### Pick commit to switch to interactively (detached HEAD)
+alias 'gsd=git log --pretty=format:"%h %s" --no-merges --all | fzf --reverse | cut -c -7 | xargs -o git switch --detach'
 
 # Custom functions
 
