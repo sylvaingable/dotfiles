@@ -39,7 +39,7 @@
 	all = true
 
 [help]
-	autoCorrect = promptenv
+	autoCorrect = 20
 
 [init]
 	defaultBranch = main
