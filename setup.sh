@@ -10,10 +10,10 @@ set -x
 mkdir -p ~/.config
 
 # Link Git config
-[ ! -e ~/.config/git ] && ln -s "$PWD/config/git" ~/.config/git
+ln -sf "$PWD/config/git" ~/.config/git
 
-# Link zsh config
-[ ! -e ~/.zshrc ] && ln -s "$PWD/zshrc" ~/.zshrc
+# Link zsh config (replace existing one if it exists)
+ln -sf "$PWD/zshrc" ~/.zshrc
 
 # Link ipython default profile startup scripts
 mkdir -p ~/.ipython/profile_default/startup
@@ -23,12 +23,12 @@ for file in $PWD/ipython/profile_default/startup/*; do
 done
 
 # Link (i)pdb config
-[ ! -e ~/.pdbrc ] && ln -s "$PWD/pdbrc" ~/.pdbrc
+ln -sf "$PWD/pdbrc" ~/.pdbrc
 
 
 # Link psql config
-[ ! -e ~/.psqlrc ] && ln -s "$PWD/psqlrc" ~/.psqlrc
+ln -sf "$PWD/psqlrc" ~/.psqlrc
 
 # Link pip config
 mkdir -p ~/.pip
-[ ! -e ~/.pip/pip.conf ] && ln -s "$PWD/pip.conf" ~/.pip/pip.conf
+ln -sf "$PWD/pip.conf" ~/.pip/pip.conf
