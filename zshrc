@@ -34,10 +34,12 @@ export PYTHONSTARTUP=".startup.py"
 export PYTHONDEVMODE=1
 
 # Zoxide init
-eval "$(zoxide init zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
 
 # zsh-autoenv init — https://github.com/Tarrasch/zsh-autoenv
-source ~/dotfiles/lib/zsh-autoenv/autoenv.zsh
+[[ -f "$HOME/dotfiles/lib/zsh-autoenv/autoenv.zsh" ]] && source "$HOME/dotfiles/lib/zsh-autoenv/autoenv.zsh"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -461,3 +463,6 @@ function mem() {
 
   return $exit_status
 }
+
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
+
