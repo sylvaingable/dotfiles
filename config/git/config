@@ -43,6 +43,7 @@
 
 [init]
 	defaultBranch = main
+	templateDir = /Users/sylvain/.git-template
 
 [interactive]
 	diffFilter = delta --color-only
