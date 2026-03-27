@@ -37,7 +37,7 @@ export PYTHONDEVMODE=1
 eval "$(zoxide init zsh)"
 
 # zsh-autoenv init — https://github.com/Tarrasch/zsh-autoenv
-source ~/projects/dotfiles/lib/zsh-autoenv/autoenv.zsh
+source ~/dotfiles/lib/zsh-autoenv/autoenv.zsh
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
