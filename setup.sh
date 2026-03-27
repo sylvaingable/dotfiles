@@ -16,8 +16,9 @@ mkdir -p ~/.config
 [ ! -e ~/.zshrc ] && ln -s "$PWD/zshrc" ~/.zshrc
 
 # Link ipython default profile startup scripts
+mkdir -p ~/.ipython/profile_default/startup
 for file in $PWD/ipython/profile_default/startup/*; do
-    # echo "$file"
+    [ -f "$file" ] || continue
     [ ! -e ~/.ipython/profile_default/startup/$(basename "$file") ] && ln -s "$file" ~/.ipython/profile_default/startup/$(basename "$file")
 done
 
