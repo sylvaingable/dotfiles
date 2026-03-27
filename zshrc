@@ -5,11 +5,23 @@
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# Init brew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Detect host OS
+is_macos=false
+is_linux=false
+case "$OSTYPE" in
+  darwin*) is_macos=true ;;
+  linux*) is_linux=true ;;
+esac
+
+# Init brew when available
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # Load zsh completions
-FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+if command -v brew >/dev/null 2>&1; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
 
 # Start ssh-agent with personal key
 #eval `keychain --agents ssh --eval ~/.ssh/vingtcinq_id_rsa`
@@ -27,7 +39,7 @@ eval "$(zoxide init zsh)"
 source ~/projects/dotfiles/lib/zsh-autoenv/autoenv.zsh
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/sylvain/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -115,19 +127,25 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    iterm2
     git
-    macos
     python
 )
+if [[ "$is_macos" == true ]]; then
+    plugins+=(iterm2 macos)
+fi
 
 # If iterm2 plugin is activated
-zstyle :omz:plugins:iterm2 shell-integration yes
+if [[ "$is_macos" == true ]]; then
+  zstyle :omz:plugins:iterm2 shell-integration yes
+fi
 
 source $ZSH/oh-my-zsh.sh
 
 # Brew plugins
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if command -v brew >/dev/null 2>&1; then
+  autosuggestions_file="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [ -f "$autosuggestions_file" ] && source "$autosuggestions_file"
+fi
 # source /opt/homebrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 # User configuration
@@ -162,13 +180,21 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden'
 
 # Android dev tools paths
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+if [[ "$is_macos" == true ]]; then
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+elif [[ "$is_linux" == true ]]; then
+  export ANDROID_HOME="$HOME/Android/Sdk"
+fi
+if [[ -n "$ANDROID_HOME" ]]; then
+  export PATH=$PATH:$ANDROID_HOME/emulator
+  export PATH=$PATH:$ANDROID_HOME/tools
+  export PATH=$PATH:$ANDROID_HOME/tools/bin
+  export PATH=$PATH:$ANDROID_HOME/platform-tools
+fi
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+if [[ "$is_macos" == true ]]; then
+  test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
 
 # Useful less options
 export LESS='--chop-long-lines --HILITE-UNREAD --ignore-case --incsearch --jump-target=4 --LONG-PROMPT --no-init --quit-if-one-screen --RAW-CONTROL-CHARS --use-color --window=-4'
@@ -184,8 +210,10 @@ export LESS_TERMCAP_ue=$'\E[0m'
 
 # Init nvm
 export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+if command -v brew >/dev/null 2>&1; then
+  [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
+fi
 
 # Init pyenv
 export PYENV_ROOT="$HOME/.pyenv"
@@ -410,13 +438,19 @@ cloc-git () {
 }
 
 function mem() {
-  # Run the command with \time, capture output, and store exit status
-  output=$( ( \time -l "$@" ) 2>&1 )
+  # Run command with OS-appropriate \time output format.
+  if [[ "$is_macos" == true ]]; then
+    output=$( ( \time -l "$@" ) 2>&1 )
+    # macOS reports maximum resident set size in bytes.
+    max_rss=$(echo "$output" | awk '/maximum resident set size/ {print $1}')
+    max_rss_mib=$((max_rss / 1024 / 1024))
+  else
+    output=$( ( /usr/bin/time -v "$@" ) 2>&1 )
+    # Linux reports maximum resident set size in KiB.
+    max_rss=$(echo "$output" | awk -F': *' '/Maximum resident set size/ {print $2}')
+    max_rss_mib=$((max_rss / 1024))
+  fi
   exit_status=$?
-
-  # Extract max RSS (in bytes) and convert to MiB (mebibytes)
-  max_rss_bytes=$(echo "$output" | awk '/maximum resident set size/ {print $1}')
-  max_rss_mib=$((max_rss_bytes / 1024 / 1024))
 
   echo "${max_rss_mib} MiB"
 
