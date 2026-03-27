@@ -409,7 +409,7 @@ cloc-git () {
   rm -rf /tmp/$tmp_folder
 }
 
-function memtime() {
+function mem() {
   # Run the command with \time, capture output, and store exit status
   output=$( ( \time -l "$@" ) 2>&1 )
   exit_status=$?
