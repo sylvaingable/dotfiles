@@ -23,9 +23,10 @@ if command -v brew >/dev/null 2>&1; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
-# Start ssh-agent with personal key
-#eval `keychain --agents ssh --eval ~/.ssh/vingtcinq_id_rsa`
-eval "$(ssh-agent)"
+# Load ssh-agent for managing SSH keys, if not already running
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)"
+fi
 
 # File to load on python shells startup
 export PYTHONSTARTUP=".startup.py"
@@ -49,7 +50,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # ZSH_THEME="robbyrussell"
 ZSH_THEME=""
 # Activate starship prompt
-eval "$(starship init zsh)"
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 
 # Set list of themes to pick from when loading at random
@@ -218,7 +221,9 @@ fi
 # Init pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
 # Custom aliases
 
