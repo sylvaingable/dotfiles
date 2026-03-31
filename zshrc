@@ -48,12 +48,14 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# No need to activate a theme if starship is activated
-# ZSH_THEME="robbyrussell"
-ZSH_THEME=""
-# Activate starship prompt
 if command -v starship >/dev/null 2>&1; then
+  # No need to activate a theme if starship is activated
+  ZSH_THEME=""
+  # Activate starship prompt
   eval "$(starship init zsh)"
+else
+  # Fallback to default oh-my-zsh theme if starship is not available
+  ZSH_THEME="robbyrussell"
 fi
 
 
