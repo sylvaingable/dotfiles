@@ -18,6 +18,9 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Add ~/.local/bin to path if it exists, for user-installed tools
+[[ -d ~/.local/bin ]] && path=(~/.local/bin $path)
+
 # Load zsh completions
 if command -v brew >/dev/null 2>&1; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
@@ -337,7 +340,7 @@ grasi() {
   export GIT_EDITOR=true
   local commit
   commit=$(git log -n 50 --pretty=format:"%h %s" --no-merges | fzf --reverse | cut -c -7)
-  
+
   if [[ -n $commit ]]; then
     git rebase -i --autosquash --keep-base "$commit"
   else
@@ -370,7 +373,7 @@ odv() {
     selected=$(python manage.py show_urls)
   fi
   local view=$(echo "$selected" | fzf --height=60% --reverse | awk -F'\t' '{print $2}')
-  
+
   if [ -n "$view" ]; then
     # Extract just the class name (without module path)
     local class_name="${view##*.}"
@@ -378,14 +381,14 @@ odv() {
     local module_path="${view%.*}"
     # Convert module path to file path
     local file_path="${module_path//.//}.py"
-    
+
     # Try to find the file using git
     local found_file=$(git ls-files "*/$file_path" | head -1)
-    
+
     if [ -n "$found_file" ]; then
       # Search for the class definition in the file
       local line_number=$(rg -n "class $class_name\b" "$found_file" | cut -d: -f1 | head -1)
-      
+
       if [ -n "$line_number" ]; then
         # Open in VS Code at the specific line
         code -g "$found_file:$line_number"
@@ -397,7 +400,7 @@ odv() {
     else
       # If file not found, try to find the class anywhere in the project
       local class_location=$(git grep -l "class $class_name" | head -1)
-      
+
       if [ -n "$class_location" ]; then
         local line_number=$(rg -n "class $class_name\b" "$class_location" | cut -d: -f1 | head -1)
         code -g "$class_location:$line_number"
@@ -425,17 +428,17 @@ git rev-list --objects --all |
 
 # Fuzzy kill
 fkill() {
-    local pid 
+    local pid
     if [ "$UID" != "0" ]; then
         pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
     else
         pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    fi  
+    fi
 
     if [ "x$pid" != "x" ]
     then
         echo $pid | xargs kill -${1:-9}
-    fi  
+    fi
 }
 
 
@@ -467,4 +470,3 @@ function mem() {
 }
 
 [ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
-
