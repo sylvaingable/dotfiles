@@ -12,8 +12,17 @@ mkdir -p ~/.config
 # Link Git config
 ln -sf "$PWD/config/git" ~/.config/git
 
-# Link zsh config (replace existing one if it exists)
-ln -sf "$PWD/zshrc" ~/.zshrc
+# Link shell config for the current default shell (replace existing one if it exists)
+case "$(basename "${SHELL:-}")" in
+    fish)
+        ln -sf "$PWD/config/fish" ~/.config/fish
+        ;;
+    zsh)
+        ln -sf "$PWD/zshrc" ~/.zshrc
+        ;;
+    *)
+        ;;
+esac
 
 # Link ipython default profile startup scripts
 mkdir -p ~/.ipython/profile_default/startup
